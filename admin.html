@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Recrutement - Connexion admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body data-page="admin">
+
+  <header class="navbar">
+    <div class="container">
+      <a href="index.html" class="brand"><span class="logo">★</span><span data-site-name>Recrutement</span></a>
+      <nav class="nav-links">
+        <a href="index.html" class="btn btn-ghost btn-sm">← Accueil</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="page">
+    <div class="container">
+      <div class="form-wrap narrow">
+        <div class="page-head reveal">
+          <h1>Espace <span class="gradient-text">admin</span></h1>
+          <p>Connecte-toi pour gérer les candidatures.</p>
+        </div>
+
+        <div class="card reveal" id="login-card">
+          <div id="login-alert" class="alert hidden" role="alert"></div>
+          <form id="login-form" novalidate>
+            <div class="field">
+              <label for="username">Identifiant</label>
+              <input type="text" id="username" name="username" autocomplete="username" autofocus>
+            </div>
+            <div class="field">
+              <label for="password">Mot de passe</label>
+              <input type="password" id="password" name="password" autocomplete="current-password">
+            </div>
+            <button type="submit" id="login-btn" class="btn btn-primary btn-block">Se connecter</button>
+          </form>
+        </div>
+
+        <p style="text-align:center;margin-top:18px;font-size:.85rem;color:var(--muted)">
+          Besoin de changer le mot de passe ? <a href="hash.html">Générateur de hash</a>
+        </p>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <div class="container">© <span data-year></span> <span data-site-name>Recrutement</span></div>
+  </footer>
+
+  <script src="config.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>

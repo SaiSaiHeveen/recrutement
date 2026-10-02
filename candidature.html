@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Recrutement - Candidature</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body data-page="candidature">
+
+  <header class="navbar">
+    <div class="container">
+      <a href="index.html" class="brand"><span class="logo">★</span><span data-site-name>Recrutement</span></a>
+      <nav class="nav-links">
+        <a href="index.html" class="btn btn-ghost btn-sm">← Accueil</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="page">
+    <div class="container">
+      <div class="form-wrap">
+
+        <div class="page-head reveal">
+          <h1>Ta <span class="gradient-text">candidature</span></h1>
+          <p>Les champs marqués d'une <span style="color:var(--danger)">*</span> sont obligatoires.</p>
+        </div>
+
+        <!-- Formulaire -->
+        <div class="card reveal" id="form-card">
+          <div id="form-alert" class="alert hidden" role="alert"></div>
+
+          <form id="candidature-form" novalidate>
+            <div class="form-row">
+              <div class="field">
+                <label for="pseudo">Pseudo <span class="req">*</span></label>
+                <input type="text" id="pseudo" name="pseudo" maxlength="40" autocomplete="nickname" placeholder="Ton pseudo">
+                <div class="error-msg"></div>
+              </div>
+              <div class="field">
+                <label for="age">Âge <span class="req">*</span></label>
+                <input type="number" id="age" name="age" inputmode="numeric" placeholder="18">
+                <div class="error-msg"></div>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="field">
+                <label for="contact">Email ou Discord <span class="req">*</span></label>
+                <input type="text" id="contact" name="contact" maxlength="100" placeholder="toi@mail.com ou pseudo">
+                <div class="error-msg"></div>
+              </div>
+              <div class="field">
+                <label for="poste">Poste visé <span class="req">*</span></label>
+                <select id="poste" name="poste">
+                  <option value="">-- Choisir un poste --</option>
+                </select>
+                <div class="error-msg"></div>
+              </div>
+            </div>
+
+            <div class="field">
+              <label for="motivations">Motivations <span class="req">*</span></label>
+              <textarea id="motivations" name="motivations" maxlength="3000" placeholder="Pourquoi veux-tu nous rejoindre ? Qu'est-ce que tu peux apporter ?"></textarea>
+              <div class="hint"><span>20 caractères minimum</span><span data-counter="motivations"></span></div>
+              <div class="error-msg"></div>
+            </div>
+
+            <div class="field">
+              <label for="experience">Expérience</label>
+              <textarea id="experience" name="experience" maxlength="3000" placeholder="Expériences similaires, compétences, projets... (facultatif)"></textarea>
+              <div class="hint"><span>Facultatif</span><span data-counter="experience"></span></div>
+              <div class="error-msg"></div>
+            </div>
+
+            <div class="field">
+              <label for="disponibilites">Disponibilités <span class="req">*</span></label>
+              <input type="text" id="disponibilites" name="disponibilites" maxlength="500" placeholder="Ex : soirs de semaine 19h-23h, week-end">
+              <div class="error-msg"></div>
+            </div>
+
+            <!-- Anti-spam (invisible pour les humains) -->
+            <div style="position:absolute;left:-9999px" aria-hidden="true">
+              <label for="website">Ne pas remplir</label>
+              <input type="text" id="website" name="website" tabindex="-1" autocomplete="off">
+            </div>
+
+            <div class="field">
+              <label class="checkbox">
+                <input type="checkbox" id="rgpd" name="rgpd">
+                <span>J'accepte que ces informations soient conservées pour traiter ma candidature. <span class="req">*</span></span>
+              </label>
+              <div class="error-msg"></div>
+            </div>
+
+            <button type="submit" id="submit-btn" class="btn btn-primary btn-lg btn-block">Envoyer ma candidature</button>
+          </form>
+        </div>
+
+        <!-- Confirmation -->
+        <div class="card success-screen hidden" id="success-card">
+          <div class="check">✔</div>
+          <h2>Merci <span id="success-pseudo"></span> !</h2>
+          <p>Ta candidature a bien été envoyée. Notre équipe va l'étudier et te recontactera via le contact indiqué.</p>
+          <div class="hero-actions">
+            <a href="index.html" class="btn btn-primary">Retour à l'accueil</a>
+            <button type="button" id="new-application" class="btn btn-ghost">Nouvelle candidature</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <div class="container">© <span data-year></span> <span data-site-name>Recrutement</span></div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="config.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>

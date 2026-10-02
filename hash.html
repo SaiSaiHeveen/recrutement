@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Recrutement - Générateur de hash</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body data-page="hash">
+
+  <header class="navbar">
+    <div class="container">
+      <a href="index.html" class="brand"><span class="logo">★</span><span data-site-name>Recrutement</span></a>
+      <nav class="nav-links">
+        <a href="admin.html" class="btn btn-ghost btn-sm">← Connexion</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="page">
+    <div class="container">
+      <div class="form-wrap">
+        <div class="page-head">
+          <h1>Générateur de <span class="gradient-text">hash</span></h1>
+          <p>Calcule le hash SHA-256 d'un nouveau mot de passe admin. Le calcul se fait uniquement dans ton navigateur, rien n'est envoyé.</p>
+        </div>
+
+        <div class="card">
+          <div id="hash-alert" class="alert hidden"></div>
+          <form id="hash-form">
+            <div class="field">
+              <label for="pwd">Nouveau mot de passe</label>
+              <input type="text" id="pwd" name="pwd" autocomplete="off" required placeholder="Un mot de passe long et unique">
+            </div>
+            <button type="submit" class="btn btn-primary btn-block">Générer le hash</button>
+          </form>
+
+          <div id="hash-box" class="hidden" style="margin-top:22px">
+            <div class="detail">
+              <div class="k">1. Colle ce hash dans config.js → ADMIN_PASSWORD_HASH</div>
+              <div class="v hash-out" id="hash-result"></div>
+            </div>
+            <button class="btn btn-ghost btn-sm" data-copy="hash-result">Copier le hash</button>
+
+            <div class="detail" style="margin-top:18px">
+              <div class="k">2. Exécute cette requête dans Supabase → SQL Editor</div>
+              <div class="v hash-out" id="hash-sql"></div>
+            </div>
+            <button class="btn btn-ghost btn-sm" data-copy="hash-sql">Copier la requête SQL</button>
+
+            <div class="alert alert-info" style="margin-top:18px;margin-bottom:0">
+              3. Enregistre config.js, puis publie le changement (Commit + Push dans GitHub Desktop). Reconnecte-toi avec le nouveau mot de passe.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <div class="container">© <span data-year></span> <span data-site-name>Recrutement</span></div>
+  </footer>
+
+  <script src="config.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
