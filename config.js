@@ -47,7 +47,7 @@ const CONFIG = {
   SUPABASE_ANON_KEY: "sb_publishable_I8iMH-OGYNDr--ANDPts1Q_B-6DCIDM",
 
   ADMIN_USERNAME: "admin",
-  ADMIN_PASSWORD_HASH: "a74cd24a2c814c2ec90424c6caff0e5bd50414276092061b8c1da79c24d39ddd",
+  ADMIN_PASSWORD_HASH: "be264005ab1dbf9e25bec5137f96ad61b3052cb946272b2e184382f799095d36",
 
   // Postes proposés dans le formulaire
   POSTES: ["Développeur", "Helper"],
