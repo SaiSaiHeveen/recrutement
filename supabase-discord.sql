@@ -42,3 +42,4 @@ $$;
 
 -- La fonction Discord (Edge Function) utilise la clé serveur pour vérifier l'admin
 grant execute on function public._is_admin(text, text) to service_role;
+grant select, update on public.candidatures to service_role;
