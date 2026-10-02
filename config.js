@@ -50,7 +50,7 @@ const CONFIG = {
   ADMIN_PASSWORD_HASH: "a74cd24a2c814c2ec90424c6caff0e5bd50414276092061b8c1da79c24d39ddd",
 
   // Postes proposés dans le formulaire
-  POSTES: ["Modérateur", "Développeur", "Graphiste", "Animateur", "Support"],
+  POSTES: ["Développeur", "Helper"],
 
   AGE_MIN: 13,
   AGE_MAX: 99
