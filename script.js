@@ -422,7 +422,11 @@ function initDashboard() {
   // Appelle l'Edge Function Supabase qui donne le rôle Discord
   async function giveDiscordRole(id) {
     const c = candidatures.find(x => x.id === id);
-    if (!c || !c.discord || !CONFIG.DISCORD_AUTO_ROLE) return;
+    if (!c || !CONFIG.DISCORD_AUTO_ROLE) return;
+    if (!c.discord) {
+      toast("Pas de pseudo Discord sur cette candidature : rôle non attribué. Ajoute-le dans Supabase (colonne discord) puis clique « Donner le rôle Discord ».", "error");
+      return;
+    }
 
     toast("Attribution du rôle Discord...");
     let result;
