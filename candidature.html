@@ -48,17 +48,24 @@
 
             <div class="form-row">
               <div class="field">
-                <label for="contact">Email ou Discord <span class="req">*</span></label>
-                <input type="text" id="contact" name="contact" maxlength="100" placeholder="toi@mail.com ou pseudo">
+                <label for="discord">Pseudo Discord <span class="req">*</span></label>
+                <input type="text" id="discord" name="discord" maxlength="40" autocomplete="off" placeholder="ex : lezox">
+                <div class="hint"><span>Ton nom d'utilisateur Discord. Tu dois être sur notre serveur.</span></div>
                 <div class="error-msg"></div>
               </div>
               <div class="field">
-                <label for="poste">Poste visé <span class="req">*</span></label>
-                <select id="poste" name="poste">
-                  <option value="">-- Choisir un poste --</option>
-                </select>
+                <label for="contact">Email</label>
+                <input type="email" id="contact" name="contact" maxlength="100" autocomplete="email" placeholder="toi@mail.com (facultatif)">
                 <div class="error-msg"></div>
               </div>
+            </div>
+
+            <div class="field">
+              <label for="poste">Poste visé <span class="req">*</span></label>
+              <select id="poste" name="poste">
+                <option value="">-- Choisir un poste --</option>
+              </select>
+              <div class="error-msg"></div>
             </div>
 
             <div class="field">
@@ -103,7 +110,7 @@
         <div class="card success-screen hidden" id="success-card">
           <div class="check">✔</div>
           <h2>Merci <span id="success-pseudo"></span> !</h2>
-          <p>Ta candidature a bien été envoyée. Notre équipe va l'étudier et te recontactera via le contact indiqué.</p>
+          <p>Ta candidature a bien été envoyée. Notre équipe va l'étudier. Si elle est acceptée, tu recevras ton rôle et un message sur Discord : reste bien sur le serveur !</p>
           <div class="hero-actions">
             <a href="index.html" class="btn btn-primary">Retour à l'accueil</a>
             <button type="button" id="new-application" class="btn btn-ghost">Nouvelle candidature</button>

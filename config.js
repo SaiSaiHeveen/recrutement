@@ -52,6 +52,10 @@ const CONFIG = {
   // Postes proposés dans le formulaire
   POSTES: ["Développeur", "Helper"],
 
+  // Donne automatiquement le rôle Discord quand une candidature est acceptée
+  // (nécessite l'Edge Function "discord-role" dans Supabase, voir DISCORD.md)
+  DISCORD_AUTO_ROLE: true,
+
   AGE_MIN: 13,
   AGE_MAX: 99
 };

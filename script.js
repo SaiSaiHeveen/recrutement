@@ -101,6 +101,7 @@ function friendlyError(err) {
   if (/Accès refusé|42501|permission denied/i.test(msg)) return "Accès refusé par la base de données. Vérifie que le mot de passe dans Supabase (table admin_config) correspond à celui de config.js.";
   if (/violates check constraint/i.test(msg)) return "Certaines informations ne respectent pas le format attendu. Vérifie les champs et réessaie.";
   if (/Invalid API key|JWT|apikey/i.test(msg)) return "Clé Supabase invalide. Vérifie SUPABASE_ANON_KEY dans config.js.";
+  if (/discord/i.test(msg) && /column|Could not find/i.test(msg)) return "La base n'est pas à jour : exécute supabase-discord.sql dans Supabase (SQL Editor).";
   if (/does not exist|Could not find/i.test(msg)) return "La table ou les fonctions n'existent pas encore. As-tu exécuté supabase.sql dans Supabase ?";
   return msg || "Une erreur inattendue est survenue.";
 }
@@ -183,9 +184,16 @@ function initCandidature() {
       if (n > CONFIG.AGE_MAX) return "Âge invalide.";
       return "";
     },
+    discord: v => {
+      const name = v.replace(/^@/, "");
+      if (!name) return "Indique ton pseudo Discord.";
+      if (!/^[A-Za-z0-9_.]{2,32}(#\d{4})?$/.test(name) && !/^\d{17,20}$/.test(name)) {
+        return "Pseudo Discord invalide : indique ton nom d'utilisateur (lettres, chiffres, _ et . uniquement), pas ton surnom.";
+      }
+      return "";
+    },
     contact: v => {
-      if (v.length < 3) return "Indique un email ou un pseudo Discord.";
-      if (v.includes("@") && v.includes(".") && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)) return "Cette adresse email n'est pas valide.";
+      if (v && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)) return "Cette adresse email n'est pas valide.";
       return "";
     },
     poste: v => !v ? "Choisis un poste." : "",
@@ -239,7 +247,8 @@ function initCandidature() {
     const data = {
       pseudo: form.elements.pseudo.value.trim(),
       age: Number(form.elements.age.value),
-      contact: form.elements.contact.value.trim(),
+      discord: form.elements.discord.value.trim().replace(/^@/, ""),
+      contact: form.elements.contact.value.trim() || null,
       poste: form.elements.poste.value,
       motivations: form.elements.motivations.value.trim(),
       experience: form.elements.experience.value.trim() || null,
@@ -389,7 +398,7 @@ function initDashboard() {
       <tr style="animation-delay:${Math.min(i, 15) * 30}ms">
         <td data-label="Pseudo"><strong>${escapeHtml(c.pseudo)}</strong></td>
         <td data-label="Poste">${escapeHtml(c.poste)}</td>
-        <td data-label="Âge">${escapeHtml(c.age)}</td>
+        <td data-label="Discord">${escapeHtml(c.discord || c.contact || "-")} ${discordBadge(c)}</td>
         <td data-label="Date">${formatDate(c.created_at)}</td>
         <td data-label="Statut"><span class="status status-${escapeHtml(c.statut)}">${STATUT_LABELS[c.statut] || escapeHtml(c.statut)}</span></td>
         <td data-label="Actions">
@@ -403,6 +412,52 @@ function initDashboard() {
       </tr>`).join("");
   }
 
+  function discordBadge(c) {
+    if (c.statut !== "acceptee" || !c.discord) return "";
+    if (c.discord_role === "ok") return `<span class="status status-acceptee" title="Rôle Discord attribué">rôle ✔</span>`;
+    if (c.discord_role) return `<span class="status status-refusee" title="${escapeHtml(c.discord_role)}">rôle ✖</span>`;
+    return "";
+  }
+
+  // Appelle l'Edge Function Supabase qui donne le rôle Discord
+  async function giveDiscordRole(id) {
+    const c = candidatures.find(x => x.id === id);
+    if (!c || !c.discord || !CONFIG.DISCORD_AUTO_ROLE) return;
+
+    toast("Attribution du rôle Discord...");
+    let result;
+    try {
+      const { data, error } = await getClient().functions.invoke("discord-role", {
+        body: { user: session.user, password: session.pwd, id }
+      });
+      if (error) {
+        let msg = error.message;
+        try { msg = (await error.context.json()).error || msg; } catch {}
+        throw new Error(msg);
+      }
+      result = data;
+    } catch (err) {
+      console.error(err);
+      const msg = /Failed to send|Failed to fetch|not found|404/i.test(err.message)
+        ? "La fonction Discord n'est pas encore installée dans Supabase (Edge Function « discord-role »)."
+        : err.message;
+      c.discord_role = msg;
+      render();
+      toast("Rôle Discord non attribué : " + msg, "error");
+      return;
+    }
+
+    if (result && result.ok) {
+      c.discord_role = "ok";
+      toast(result.dm ? "Rôle Discord attribué ✔ + message privé envoyé" : "Rôle Discord attribué ✔ (MP fermés, message non envoyé)", "success");
+    } else {
+      c.discord_role = (result && result.error) || "Erreur inconnue";
+      toast("Rôle Discord non attribué : " + c.discord_role, "error");
+    }
+    render();
+    if (!modal.classList.contains("hidden")) openModal(id);
+  }
+
   async function setStatut(id, statut) {
     try {
       await rpc("admin_set_statut", { p_id: id, p_statut: statut });
@@ -411,6 +466,7 @@ function initDashboard() {
       render();
       toast(statut === "acceptee" ? "Candidature acceptée ✔" : "Candidature refusée", statut === "acceptee" ? "success" : "error");
       closeModal();
+      if (statut === "acceptee") giveDiscordRole(id);
     } catch (err) {
       console.error(err);
       toast(friendlyError(err), "error");
@@ -447,8 +503,10 @@ function initDashboard() {
       <div class="detail-grid">
         ${d("Pseudo", c.pseudo)}
         ${d("Âge", c.age + " ans")}
-        ${d("Contact (email / Discord)", c.contact)}
+        ${d("Discord", c.discord)}
+        ${d("Email", c.contact)}
         ${d("Poste visé", c.poste)}
+        ${c.statut === "acceptee" && c.discord ? d("Rôle Discord", c.discord_role === "ok" ? "✔ Attribué" : c.discord_role ? "✖ " + c.discord_role : "Pas encore attribué") : ""}
       </div>
       ${d("Motivations", c.motivations)}
       ${d("Expérience", c.experience)}
@@ -456,6 +514,7 @@ function initDashboard() {
       <div class="modal-actions">
         ${c.statut !== "acceptee" ? `<button class="btn btn-success" data-action="acceptee" data-id="${c.id}">✔ Accepter</button>` : ""}
         ${c.statut !== "refusee" ? `<button class="btn btn-danger" data-action="refusee" data-id="${c.id}">✖ Refuser</button>` : ""}
+        ${c.statut === "acceptee" && c.discord && c.discord_role !== "ok" ? `<button class="btn btn-primary" data-action="discord" data-id="${c.id}">↻ Donner le rôle Discord</button>` : ""}
         <button class="btn btn-ghost" data-action="delete" data-id="${c.id}">🗑 Supprimer</button>
       </div>`;
     modal.classList.remove("hidden");
@@ -482,6 +541,7 @@ function initDashboard() {
     const action = btn.dataset.action;
     if (action === "view") openModal(id);
     else if (action === "delete") remove(id);
+    else if (action === "discord") giveDiscordRole(id);
     else setStatut(id, action);
   });
 
